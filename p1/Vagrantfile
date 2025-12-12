@@ -7,8 +7,8 @@ Vagrant.configure("2") do |config|
   config.vm.box = "debian/bookworm64"
 
   ## Machine 1 : K3s Server
-  config.vm.define "sben-tayS" do |srv|
-    srv.vm.hostname = "sben-tayS"
+  config.vm.define "rwassimS" do |srv|
+    srv.vm.hostname = "rwassimS"
     srv.vm.network "private_network", ip: "192.168.56.110"
 
     srv.vm.provider :libvirt do |hv|
@@ -23,8 +23,8 @@ Vagrant.configure("2") do |config|
   end
 
   ## Machine 2 : K3s Worker
-  config.vm.define "sben-taySW" do |wrk|
-    wrk.vm.hostname = "sben-taySW"
+  config.vm.define "rwassimSW" do |wrk|
+    wrk.vm.hostname = "rwassimSW"
     wrk.vm.network "private_network", ip: "192.168.56.111"
 
     wrk.vm.provider :libvirt do |hv|
