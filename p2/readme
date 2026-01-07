@@ -1,0 +1,11 @@
+	make up
+	make status
+
+	make ssh # get a shell prompt on the VM
+	kubectl get nodes
+	kubectl get pods -A
+
+	curl -H "Host: app1.com" http://192.168.56.110 → app1
+	curl -H "Host: app2.com" http://192.168.56.110 → app2
+	curl -H "Host: app3.com" http://192.168.56.110 → app3
+	curl http://192.168.56.110

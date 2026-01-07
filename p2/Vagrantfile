@@ -1,0 +1,23 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/bookworm64"
+
+  config.vm.define "achaisneS" do |srv|
+    srv.vm.hostname = "achaisneS"
+    srv.vm.network "private_network", ip: "192.168.56.110"
+
+    srv.vm.provider :virtualbox do |vb|
+      vb.cpus = 2
+      vb.memory = 2048
+    end
+
+    srv.vm.provider :libvirt do |hv|
+      hv.cpus = 1
+      hv.memory = 2048
+      hv.driver = "kvm"
+      hv.machine_type = "pc"
+      hv.uri = "qemu:///system"
+    end
+
+    srv.vm.provision "shell", path: "scripts/init_server.sh"
+  end
+end
