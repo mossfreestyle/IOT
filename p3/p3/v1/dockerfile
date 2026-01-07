@@ -15,6 +15,6 @@ RUN chmod +x ./init_python.sh
 
 CMD [ "./init_python.sh" ]
 
-EXPOSE 4001
+EXPOSE 4000
 
 ENTRYPOINT [ "python3", "main.py" ]
