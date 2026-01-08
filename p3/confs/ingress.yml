@@ -5,7 +5,7 @@ metadata:
   namespace: dev
 spec:
   rules:
-    - host: iot.localhost
+    - host: localhost
       http:
         paths:
           - path: /
@@ -14,4 +14,4 @@ spec:
               service:
                 name: iot
                 port:
-                  number: 4000
+                  number: 8888

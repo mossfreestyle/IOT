@@ -1,0 +1,1 @@
+k3d cluster create --config ../confs/k3d-config.yml
