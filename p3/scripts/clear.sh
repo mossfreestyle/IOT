@@ -10,6 +10,8 @@ else
     k3d cluster delete "$name"
 fi
 
+rm -rf ../credentials
+
 read -p "Want to clear docker images? [y/N] " yorn
 
 if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then

@@ -7,9 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/MF/mfernand-manifests.git
+    repoURL: https://github.com/M-F-7/mfernand-manifests.git
     targetRevision: main
-    path: /
+    path: confs
 
   destination:
     server: https://kubernetes.default.svc
