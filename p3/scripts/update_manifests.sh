@@ -20,7 +20,6 @@ case $input in
 *) echo "Invalid input, the version 1 will be set by default"; v="v1";;
 esac
 
-yq -i ".spec.template.spec.containers[0].image = \"mfzeroseven/iot:${v}\"" ../confs/deployment.yml
 
 
 echo "Making a push to $repo with the version $v"
@@ -30,10 +29,7 @@ rm -rf mfernand-manifests
 git clone $repo > /dev/null > /dev/null 2>&1
 echo "$repo_dir cloned"
 
-cp -r p3/confs/deployment.yml $repo_dir/confs/
-cp -r p3/confs/namespace.yml $repo_dir/confs/
-cp -r p3/confs/service.yml $repo_dir/confs/
-cp -r p3/confs/ingress.yml $repo_dir/confs/
+yq -i ".spec.template.spec.containers[0].image = \"mfzeroseven/iot:${v}\"" mfernand-manifests/confs/deployment.yml
 
 cd $repo_dir
 
