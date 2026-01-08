@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(
+            name: 'VERSION',
+            choices: ['v1', 'v2'],
+            description: 'Choose the version to build'
+        )
+    }
+
+    stages {
+
+        stage('Build v1') {
+            when { expression { params.VERSION == 'v1' } }
+            steps {
+                sh "docker build -t v1:latest v1/"
+            }
+        }
+
+        stage('Build v2') {
+            when { expression { params.VERSION == 'v2' } }
+            steps {
+                sh "docker build -t v2:latest v2/"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "docker run -d --name test-${params.VERSION} -p 8888:8888 ${params.VERSION}:latest"
+                sh "sleep 1"
+                sh "curl http://localhost:8888"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh "docker tag ${params.VERSION}:latest mfzeroseven/iot:${params.VERSION}"
+                sh "docker push mfzeroseven/iot:${params.VERSION}"
+            }
+        }
+
+        stage('Update mfernand-manifests') {
+            steps {
+                sh """
+                    git clone https://github.com/M-F-7/mfernand-manifests.git
+
+                    sed -i "s|image: 'mfzeroseven/iot:.*'|image: 'mfzeroseven/iot:${params.VERSION}'|" mfernand-manifests/confs/deployment.yml
+
+                    cd mfernand-manifests
+
+                    git config user.email "jenkins@email"
+                    git config user.name "Jenkins name"
+
+                    git add .
+                    git commit -m "Updating manifests from Jenkins with version: ${params.VERSION}"
+                    git push
+
+                    cd ..
+                    rm -rf mfernand-manifests
+                """
+            }
+        }
+    }
+
+    post {
+        always {
+            sh "docker rm -f test-${params.VERSION} || true"
+            sh "docker rmi ${params.VERSION}:latest || true"
+            sh "docker rmi mfzeroseven/iot:${params.VERSION} || true"
+        }
+    }
+}
