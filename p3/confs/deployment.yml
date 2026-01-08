@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: iot
-          image: 'mfzeroseven/iot:v1'
+          image: 'mfzeroseven/iot:v2'
           ports:
             - containerPort: 8888
           resources:

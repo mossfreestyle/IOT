@@ -30,7 +30,11 @@ rm -rf mfernand-manifests
 git clone $repo > /dev/null > /dev/null 2>&1
 echo "$repo_dir cloned"
 
-cp -r p3/confs/* $repo_dir/confs/
+cp -r p3/confs/deployment.yml $repo_dir/confs/
+cp -r p3/confs/namespace.yml $repo_dir/confs/
+cp -r p3/confs/service.yml $repo_dir/confs/
+cp -r p3/confs/ingress.yml $repo_dir/confs/
+
 cd $repo_dir
 
 git add .

@@ -1,7 +1,7 @@
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:
-  name: test
+  name: mfernand-cluster
 servers: 1
 agents: 0
 
@@ -10,5 +10,8 @@ ports:
     nodeFilters:
       - loadbalancer
   - port: 443:443
+    nodeFilters:
+      - loadbalancer
+  - port: 8888:80
     nodeFilters:
       - loadbalancer
