@@ -1,6 +1,7 @@
 import jenkins.model.*
 import hudson.models.*
 
+// Jenkins.instance.getCrumbIssuer().disable()
 def user = User.get("admin")
 def tokenStore = user.getProperty(jenkins.security.ApiTokenProperty.class)
 def token = tokenStore.tokenStore.generateNewToken("bootstrap")

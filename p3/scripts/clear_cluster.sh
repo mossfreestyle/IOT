@@ -13,11 +13,17 @@ fi
 
 
 
-read -p "Want to clear docker images? [y/N] " yorn
+read -p "Want to delete the cluster containers? [y/N] " yorn
 
 if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
     docker rm -f k3d-mfernand-cluster-serverlb
     docker rm -f k3d-mfernand-cluster-server-0
+fi
+
+
+read -p "Want to delete the cluster images? [y/N] " yorn
+
+if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
     docker rmi ghcr.io/k3d-io/k3d-proxy:5.8.3
     docker rmi ghcr.io/k3d-io/k3d-tools:5.8.3
     docker rmi rancher/k3s:v1.31.5-k3s1

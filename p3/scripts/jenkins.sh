@@ -25,12 +25,15 @@ echo "Jenkins is running on 8081"
 docker cp jenkins:/var/jenkins_home/secrets/initialAdminPassword ../credentials/jenkins_pass.txt
 export JENKINS_ADMIN_PASS="$(cat ../credentials/jenkins_pass.txt)"
 
+curl -s -c cookies.txt -u "admin:$PASS" http://localhost:8081/login > /dev/null
 
 
 docker exec jenkins curl -s -o /var/jenkins_home/jenkins-cli.jar \
                               http://localhost:8080/jnlpJars/jenkins-cli.jar
 
-until curl -s http://localhost:8081/scriptText --user admin:$JENKINS_ADMIN_PASS -d "script=println('ok')" > /dev/null; do
+until curl -s -b cookies.txt \
+  --data-urlencode "script=println('ok')" \
+  http://localhost:8081/scriptText ; do
     echo "Waiting the CLI"
     sleep 1
 done
