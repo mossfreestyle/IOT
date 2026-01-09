@@ -22,11 +22,3 @@ if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
     docker rmi ghcr.io/k3d-io/k3d-tools:5.8.3
     docker rmi rancher/k3s:v1.31.5-k3s1
 fi
-
-read -p "Want to clear Jenkins? [y/N] " YORN
-
-if [[ "$YORN" == "y" || "$YORN" == "Y" ]]; then
-    docker rm -f jenkins
-    docker rmi jenkins/jenkins:lts
-    rm -rf ../credentials/jenkins_pass.txt
-fi
