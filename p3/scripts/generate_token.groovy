@@ -1,9 +1,10 @@
-import jenkins.model.*
-import hudson.models.*
+import hudson.model.User
+import jenkins.security.ApiTokenProperty
 
-// Jenkins.instance.getCrumbIssuer().disable()
-def user = User.get("admin")
-def tokenStore = user.getProperty(jenkins.security.ApiTokenProperty.class)
-def token = tokenStore.tokenStore.generateNewToken("bootstrap")
+def user = User.get('admin')
+def apiTokenProperty = user.getProperty(ApiTokenProperty.class)
+
+def token = apiTokenProperty.generateNewToken('CLI-Generated-Token')
 user.save()
 
+println token.plainValue

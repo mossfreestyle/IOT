@@ -6,6 +6,7 @@ docker run -d \
   -p 50000:50000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v jenkins_home:/var/jenkins_home \
+  -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" \
   jenkins/jenkins:lts > /dev/null
 
 mkdir -p ../credentials
@@ -25,24 +26,22 @@ echo "Jenkins is running on 8081"
 docker cp jenkins:/var/jenkins_home/secrets/initialAdminPassword ../credentials/jenkins_pass.txt
 export JENKINS_ADMIN_PASS="$(cat ../credentials/jenkins_pass.txt)"
 
-curl -s -c cookies.txt -u "admin:$PASS" http://localhost:8081/login > /dev/null
-
+curl -s -u "admin:$JENKINS_ADMIN_PASS" http://localhost:8081/login > /dev/null
 
 docker exec jenkins curl -s -o /var/jenkins_home/jenkins-cli.jar \
                               http://localhost:8080/jnlpJars/jenkins-cli.jar
 
-until curl -s -b cookies.txt \
-  --data-urlencode "script=println('ok')" \
-  http://localhost:8081/scriptText ; do
-    echo "Waiting the CLI"
-    sleep 1
-done
-
 echo "Jenkins CLI is installed"
 
-TOKEN=$(curl -s -u "admin:$JENKINS_ADMIN_PASS" \
-    --data-urlencode "script=$(cat generate_token.groovy)" \
-    http://localhost:8081/scriptText)
+
+docker cp generate_token.groovy jenkins:/var/jenkins_home/generate_token.groovy
+
+TOKEN=$(docker exec jenkins sh -c "
+  java -jar /var/jenkins_home/jenkins-cli.jar \
+    -s http://localhost:8080 \
+    -auth admin:'"$JENKINS_ADMIN_PASS"' \
+    groovy = < /var/jenkins_home/generate_token.groovy")
+
     
 
 TOKEN=$(echo "$TOKEN" | tr -d '\r\n')
@@ -51,24 +50,29 @@ echo "API Token generated"
 
 echo -n "$TOKEN" > ../credentials/jenkins_api_token.txt
 
-# export JENKINS_URL=http://localhost:8081
-# export JENKINS_USER_ID=admin
-# export JENKINS_API_TOKEN="$(cat ../credentials/jenkins_api_token.txt)"
 
-
-# docker exec -u root jenkins sh -c "echo 'JENKINS_URL=http://localhost:8080' >> /etc/environment"
-# docker exec -u root jenkins sh -c "echo 'JENKINS_USER_ID=admin' >> /etc/environment"
-# docker exec -u root jenkins sh -c "echo 'JENKINS_API_TOKEN=$TOKEN' >> /etc/environment"
+#TODO
 
 docker exec jenkins sh -c "echo 'export JENKINS_URL=http://localhost:8080' > /var/jenkins_home/env.sh"
 docker exec jenkins sh -c "echo 'export JENKINS_USER_ID=admin' >> /var/jenkins_home/env.sh"
 docker exec jenkins sh -c "echo 'export JENKINS_API_TOKEN=$TOKEN' >> /var/jenkins_home/env.sh"
 
 
-echo "All env variables are define in jenkins container"
-
-docker exec jenkins sh -lc ". /var/jenkins_home/env.sh && \
-        java -jar /var/jenkins_home/jenkins-cli.jar \
+docker exec jenkins sh -lc "
+    export PATH=/opt/java/openjdk/bin:\$PATH
+    . /var/jenkins_home/env.sh
+    export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN
+    java -jar /var/jenkins_home/jenkins-cli.jar \
         -s \$JENKINS_URL \
         -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
-        help"
+        help
+"
+
+docker exec jenkins sh -lc "
+    . /var/jenkins_home/env.sh
+    export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN
+    echo \"CLI will use: \$JENKINS_USER_ID:\$JENKINS_API_TOKEN @ \$JENKINS_URL\"
+"
+
+
+echo "All env variables are define in jenkins container"
