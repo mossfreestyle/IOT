@@ -68,11 +68,11 @@ docker exec jenkins sh -lc "
         help
 "
 
-docker exec jenkins sh -lc "
-    . /var/jenkins_home/env.sh
-    export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN
-    echo \"CLI will use: \$JENKINS_USER_ID:\$JENKINS_API_TOKEN @ \$JENKINS_URL\"
-"
+# docker exec jenkins sh -lc "
+#     . /var/jenkins_home/env.sh
+#     export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN
+#     echo \"CLI will use: \$JENKINS_USER_ID:\$JENKINS_API_TOKEN @ \$JENKINS_URL\"
+# "
 
 
 echo "All env variables are define in jenkins container"
