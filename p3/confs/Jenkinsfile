@@ -18,7 +18,7 @@ pipeline {
                     echo "Building Docker image for ${params.VERSION} from ${path}"
 
                     // Build l’image Docker via Jenkins
-                    def dockerImage = docker.build("${params.VERSION}:${params.VERSION}", path)
+                    def dockerImage = docker.build("${params.VERSION}:latest", path)
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
                     echo "Running container for ${params.VERSION}"
 
                     // Lance le conteneur
-                    def container = docker.image("${params.VERSION}:${params.VERSION}").run("--network jenkins-net --name ${params.VERSION} -d -p 8888:8888")
+                    def container = docker.image("${params.VERSION}:latest").run("--network jenkins-net --name ${params.VERSION} -d -p 8888:8888")
 
                     // Attendre un peu
                     sleep 5
@@ -46,8 +46,9 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
+                    sh "docker tag ${params.VERSION}:latest mfzeroseven/iot/${params.VERSION}"
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
-                        dockerImage.push("${params.VERSION}")
+                        sh "docker push mfzeroseven/iot:${params.VERSION}"
                     }
                 }
             }
