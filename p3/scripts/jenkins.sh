@@ -1,17 +1,11 @@
 #!/bin/bash
 
-# docker run -d \
-#   --name jenkins \
-#   -p 8081:8080 \
-#   -p 50000:50000 \
-#   -v /var/run/docker.sock:/var/run/docker.sock \
-#   -v jenkins_home:/var/jenkins_home \
-#   # -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" \
-#   jenkins/jenkins:lts > /dev/null
-
 mkdir -p ../credentials
 getent group docker | cut -d: -f3 > ../credentials/docker_id.txt
 DOCKER_GID=$(cat ../credentials/docker_id.txt)
+
+docker network create jenkins-net > /dev/null
+
 docker run -d \
   --name jenkins \
   -p 8081:8080 \
@@ -19,6 +13,7 @@ docker run -d \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v jenkins_home:/var/jenkins_home \
   --group-add $DOCKER_GID \
+  --network jenkins-net \
   jenkins/jenkins:lts
 
 
@@ -92,3 +87,5 @@ echo "All env variables are define in jenkins container"
 docker exec -u root jenkins apt-get update > /dev/null
 docker exec -u root jenkins apt-get install -y docker.io  > /dev/null
 docker exec -u root jenkins usermod -aG docker jenkins
+
+#installer docker et ou docker pipeline dans le manage jenkins et plugins
