@@ -29,7 +29,7 @@ pipeline {
                     echo "Running container for ${params.VERSION}"
 
                     // Lance le conteneur
-                    def container = docker.image("${params.VERSION}:latest").run("--network jenkins-net --name ${params.VERSION} -d -p 8888:8888")
+                    def container = docker.image("${params.VERSION}:${params.VERSION}").run("--network jenkins-net --name ${params.VERSION} -d -p 8888:8888")
 
                     // Attendre un peu
                     sleep 5
