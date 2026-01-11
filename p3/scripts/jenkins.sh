@@ -9,17 +9,19 @@
 #   # -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" \
 #   jenkins/jenkins:lts > /dev/null
 
-
+mkdir -p ../credentials
+getent group docker | cut -d: -f3 > ../credentials/docker_id.txt
+DOCKER_GID=$(cat ../credentials/docker_id.txt)
 docker run -d \
   --name jenkins \
   -p 8081:8080 \
   -p 50000:50000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v jenkins_home:/var/jenkins_home \
+  --group-add $DOCKER_GID \
   jenkins/jenkins:lts
 
 
-mkdir -p ../credentials
 "" > ../credentials/jenkins_pass.txt 2>/dev/null
 
 echo "Waiting for Jenkins to be fully ready..."
@@ -86,3 +88,7 @@ docker exec jenkins sh -lc "
 
 
 echo "All env variables are define in jenkins container"
+
+docker exec -u root jenkins apt-get update > /dev/null
+docker exec -u root jenkins apt-get install -y docker.io  > /dev/null
+docker exec -u root jenkins usermod -aG docker jenkins

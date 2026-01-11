@@ -8,3 +8,17 @@ ARGOCD CLI WORK: ❌
 JENKINS GUI WORK:❌
 JENKINS CLI SET UP:⏳ (fix le fais que quand volume vierge doit faire le compte admin depuis le script)
 JENKINS CLI WORKS: ❌
+
+
+j ai eu un fail de load de argocd quand je l ai start avec volume vierge mais la vm tournait en arriere plan et a pu buguer ducoup (a check)
+
+
+
+
+jenkins step: mette le mdp admin, installe les recommanded packages, skip la acoount creation and stay as admin, and define the jenkins url as the current one, homepage
+avoir un plugin docker
+
+
+docker exec -u root jenkins apt-get update
+docker exec -u root jenkins apt-get install -y docker.io
+docker exec -u root jenkins usermod -aG docker jenkins
