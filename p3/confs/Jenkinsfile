@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-    docker {
-      image 'docker:24.0'
-      args '-v /var/run/docker.sock:/var/run/docker.sock'
-    }
-  }
+    agent any
 
     parameters {
         choice(
@@ -16,32 +11,45 @@ pipeline {
 
     stages {
 
-        stage('Build v1') {
-            when { expression { params.VERSION == 'v1' } }
+        stage('Build Image') {
             steps {
-                sh "docker build -t v1:latest ../v1/"
-            }
-        }
+                script {
+                    def path = params.VERSION == 'v1' ? '../v1' : '../v2'
+                    echo "Building Docker image for ${params.VERSION} from ${path}"
 
-        stage('Build v2') {
-            when { expression { params.VERSION == 'v2' } }
-            steps {
-                sh "docker build -t v2:latest ../v2/"
+                    // Build l’image Docker via Jenkins
+                    dockerImage = docker.build("${params.VERSION}:latest", path)
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh "docker run -d --name test-${params.VERSION} -p 8888:8888 ${params.VERSION}:latest"
-                sh "sleep 1"
-                sh "curl http://localhost:8888"
+                script {
+                    echo "Running container for ${params.VERSION}"
+
+                    // Lance le conteneur
+                    def container = docker.image("${params.VERSION}:latest").run("-d -p 8888:8888")
+
+                    // Attendre un peu
+                    sleep 2
+
+                    // Test HTTP
+                    sh "curl http://localhost:8888"
+
+                    // Stop + remove
+                    sh "docker rm -f ${container.id}"
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('Push to Docker Hub') {
             steps {
-                sh "docker tag ${params.VERSION}:latest mfzeroseven/iot:${params.VERSION}"
-                sh "docker push mfzeroseven/iot:${params.VERSION}"
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
+                        dockerImage.push("${params.VERSION}")
+                    }
+                }
             }
         }
 
@@ -70,7 +78,6 @@ pipeline {
 
     post {
         always {
-            sh "docker rm -f test-${params.VERSION} || true"
             sh "docker rmi ${params.VERSION}:latest || true"
             sh "docker rmi mfzeroseven/iot:${params.VERSION} || true"
         }
