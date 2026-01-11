@@ -18,7 +18,7 @@ pipeline {
                     echo "Building Docker image for ${params.VERSION} from ${path}"
 
                     // Build l’image Docker via Jenkins
-                    def dockerImage = docker.build("${params.VERSION}:latest", path)
+                    def dockerImage = docker.build("${params.VERSION}:${params.VERSION}", path)
                 }
             }
         }
