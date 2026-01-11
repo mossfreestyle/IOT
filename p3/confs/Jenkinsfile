@@ -18,7 +18,7 @@ pipeline {
                     echo "Building Docker image for ${params.VERSION} from ${path}"
 
                     // Build l’image Docker via Jenkins
-                    dockerImage = docker.build("${params.VERSION}:latest", path)
+                    def dockerImage = docker.build("${params.VERSION}:latest", path)
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
                     sleep 5
 
                     // Test HTTP
-                    sh "curl http://localhost:8888"
+                    sh "curl http://${params.VERSION}:8888"
 
                     // Stop + remove
                     sh "docker rm -f ${container.id}"
