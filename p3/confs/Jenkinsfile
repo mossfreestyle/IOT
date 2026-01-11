@@ -14,7 +14,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    def path = params.VERSION == 'v1' ? '../v1' : '../v2'
+                    def path = params.VERSION == 'v1' ? 'v1' : 'v2'
                     echo "Building Docker image for ${params.VERSION} from ${path}"
 
                     // Build l’image Docker via Jenkins
