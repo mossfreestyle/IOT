@@ -1,0 +1,10 @@
+a voir quand on lance tout avec un volume vierge,
+ducoup faire le set up entier de jenkins depuis le script
+
+ARGOCD GUI WORK: ✅
+ARGOCD  CLI SET UP:❌
+ARGOCD CLI WORK: ❌
+
+JENKINS GUI WORK:❌
+JENKINS CLI SET UP:⏳ (fix le fais que quand volume vierge doit faire le compte admin depuis le script)
+JENKINS CLI WORKS: ❌

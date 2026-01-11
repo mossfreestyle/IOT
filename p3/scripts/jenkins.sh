@@ -1,13 +1,23 @@
 #!/bin/bash
 
+# docker run -d \
+#   --name jenkins \
+#   -p 8081:8080 \
+#   -p 50000:50000 \
+#   -v /var/run/docker.sock:/var/run/docker.sock \
+#   -v jenkins_home:/var/jenkins_home \
+#   # -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" \
+#   jenkins/jenkins:lts > /dev/null
+
+
 docker run -d \
   --name jenkins \
   -p 8081:8080 \
   -p 50000:50000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v jenkins_home:/var/jenkins_home \
-  -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" \
-  jenkins/jenkins:lts > /dev/null
+  jenkins/jenkins:lts
+
 
 mkdir -p ../credentials
 "" > ../credentials/jenkins_pass.txt 2>/dev/null

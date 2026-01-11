@@ -14,14 +14,14 @@ pipeline {
         stage('Build v1') {
             when { expression { params.VERSION == 'v1' } }
             steps {
-                sh "docker build -t v1:latest v1/"
+                sh "docker build -t v1:latest ../v1/"
             }
         }
 
         stage('Build v2') {
             when { expression { params.VERSION == 'v2' } }
             steps {
-                sh "docker build -t v2:latest v2/"
+                sh "docker build -t v2:latest ../v2/"
             }
         }
 

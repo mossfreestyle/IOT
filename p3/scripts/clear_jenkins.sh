@@ -15,3 +15,9 @@ read -p "Want to delete Jenkins image? [y/N] " yorn
 if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
     docker rmi jenkins/jenkins:lts
 fi
+
+read -p "Want to delete Jenkins volume? [y/N] " yorn
+
+if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
+    docker volume rm -f jenkins_home
+fi

@@ -28,6 +28,13 @@ if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
     docker rmi rancher/k3s:v1.31.5-k3s1
 fi
 
+read -p "Want to delete the cluster volumes? [y/N] " yorn
+
+if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
+     docker volume rm -f k3d-mfernand-cluster-images
+fi
+
+
 read -p "Want to delete ArgoCD pass? [y/N] " yorn
 
 if [[ "$yorn" == "y" || "$yorn" == "Y" ]]; then
