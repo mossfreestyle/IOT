@@ -46,7 +46,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    sh "docker tag ${params.VERSION}:latest mfzeroseven/iot/${params.VERSION}"
+                    sh "docker tag ${params.VERSION}:latest mfzeroseven/iot:${params.VERSION}"
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
                         sh "docker push mfzeroseven/iot:${params.VERSION}"
                     }
