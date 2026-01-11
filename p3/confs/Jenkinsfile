@@ -32,7 +32,7 @@ pipeline {
                     def container = docker.image("${params.VERSION}:latest").run("-d -p 8888:8888")
 
                     // Attendre un peu
-                    sleep 2
+                    sleep 5
 
                     // Test HTTP
                     sh "curl http://localhost:8888"
