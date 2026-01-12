@@ -9,6 +9,7 @@ if [[ "$YORN" == "y" || "$YORN" == "Y" ]]; then
     rm -rf ../credentials/jenkins_pass.txt
     rm -rf ../credentials/jenkins_api_token.txt
     rm -rf ../credentials/docker_id.txt
+    rm -rf ../credentials/credentials.xml
 fi
     
 
