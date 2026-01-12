@@ -1,0 +1,25 @@
+    Deployment app1
+    Crée 1 pod app1 qui lance hashicorp/http-echo et répond “app1” sur le port 5678.
+
+    Service app1
+    Expose app1 en interne sur le port 80, routé vers le port 5678 du pod.
+
+    Deployment app2
+    Crée 3 pods app2 qui répondent “app2” sur 5678 (load-balancing entre 3 réplicas).
+
+    Service app2
+    Expose app2 en interne sur le port 80, routé vers 5678.
+
+    Deployment app3
+    Crée 1 pod app3 qui répond “app3” sur 5678.
+
+    Service app3
+    Expose app3 en interne sur le port 80, routé vers 5678.
+
+    Ingress (Traefik)
+    Route les requêtes HTTP selon le Host :
+
+    app1.com → service app1
+    app2.com → service app2
+    app3.com → service app3
+    Sans Host, le defaultBackend envoie vers app3.
