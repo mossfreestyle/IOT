@@ -35,7 +35,7 @@ pipeline {
                     sleep 5
 
                     // Test HTTP
-                    sh "curl http://${params.VERSION}:8889"
+                    sh "curl http://${params.VERSION}:8888"
 
                     // Stop + remove
                     sh "docker rm -f ${container.id}"
