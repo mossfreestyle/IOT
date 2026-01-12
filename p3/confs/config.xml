@@ -3,7 +3,7 @@
   <description>Pipeline créé via CLI</description>
 
   <keepDependencies>false</keepDependencies>
-  
+
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
