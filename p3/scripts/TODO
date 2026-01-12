@@ -19,6 +19,8 @@ jenkins step: mette le mdp admin, installe les recommanded packages, skip la aco
 avoir un plugin docker
 
 
-docker exec -u root jenkins apt-get update
-docker exec -u root jenkins apt-get install -y docker.io
-docker exec -u root jenkins usermod -aG docker jenkins
+
+generer un token docker hub ou re use le meme et le mettre dans les credentials de jenkins (faut un token avec read/write pour push l image sur dokcer hub)
+avoir ton token github pour define ton username et mdp pour pouvoir git push
+
+recuperer les token github et dockerhub 

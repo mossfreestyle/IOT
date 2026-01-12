@@ -57,22 +57,24 @@ pipeline {
         stage('Update mfernand-manifests') {
             steps {
                 dir("${WORKSPACE}") {
-                    sh """
-                        rm -rf mfernand-manifests
+                    withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                        sh """
+                            rm -rf mfernand-manifests
+                            git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/M-F-7/mfernand-manifests.git
+            
+                            sed -i "s|image: 'mfzeroseven/iot:.*'|image: 'mfzeroseven/iot:${params.VERSION}'|" mfernand-manifests/confs/deployment.yml
+            
+                            cd mfernand-manifests
+            
+                            git config user.email "jenkins@email"
+                            git config user.name "Jenkins name"
+            
+                            git add .
+                            git commit -m "Updating manifests from Jenkins with version: ${params.VERSION}"
+                            git push https://${GIT_USER}:${GIT_TOKEN}@github.com/M-F-7/mfernand-manifests.git
+                        """
+                    }
 
-                        git clone https://github.com/M-F-7/mfernand-manifests.git
-
-                        sed -i "s|image: 'mfzeroseven/iot:.*'|image: 'mfzeroseven/iot:${params.VERSION}'|" mfernand-manifests/confs/deployment.yml
-
-                        cd mfernand-manifests
-
-                        git config user.email "jenkins@email"
-                        git config user.name "Jenkins name"
-
-                        git add .
-                        git commit -m "Updating manifests from Jenkins with version: ${params.VERSION}"
-                        git push
-                    """
                 }
             }
         }
