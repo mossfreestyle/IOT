@@ -80,7 +80,16 @@ docker exec -u root jenkins apt-get update > /dev/null
 docker exec -u root jenkins apt-get install -y docker.io  > /dev/null
 docker exec -u root jenkins usermod -aG docker jenkins
 
-#installer docker et ou docker pipeline dans le manage jenkins et plugins
+
+
+
+
+
+
+
+
+
+
 
 
 # rentrer le mdp jenkins
@@ -92,14 +101,134 @@ docker exec -u root jenkins usermod -aG docker jenkins
 #install recommanded plugins
 
 #install docker pipeline
+#install cloudbees-credentials
+#install docker build and docker publish
 
-docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN create-credentials-by-xml system::system::jenkins _ < ../credentials/credentials.xml
+
+
+
+
+
+
+
+
+# docker exec jenkins bash -c "echo 2.452.1 > /var/jenkins_home/jenkins.install.InstallUtil.lastExecVersion"
+# docker exec jenkins bash -c "echo 2.452.1 > /var/jenkins_home/jenkins.install.UpgradeWizard.state"
+# docker exec jenkins bash -c "echo RUNNING > /var/jenkins_home/jenkins.install.InstallState"
+# #plugins
+# docker exec jenkins jenkins-plugin-cli --plugins "workflow-aggregator git github matrix-auth credentials-binding"
+# docker exec jenkins jenkins-plugin-cli --plugins docker-workflow
+
+# docker exec jenkins java -jar /var/jenkins_home/jenkins-cli.jar \
+#   -s $URL \
+#   -auth $USER_ID:$API_TOKEN \
+#   list-plugins
+
+
+# echo "All plugins are installed"
+
+# docker exec jenkins java -jar /var/jenkins_home/jenkins-cli.jar \
+#   -s $URL \
+#   -auth $USER_ID:$API_TOKEN \
+#   safe-restart
+
+# until curl -s -o /dev/null -w "%{http_code}" "$URL/cli/" | grep -q "200"; do
+#   sleep 2
+#   echo "Still waiting..."
+# done
+
+# echo "CLI is ready."
+
+read -p "Waiting set up " name
+
+# docker exec -i jenkins bash -c ". /var/jenkins_home/env.sh \
+    # export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN" \
+    # java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN create-credentials-by-xml system::system::jenkins _ < ../credentials/credentials.xml
+
+
+# docker exec jenkins bash -c "
+#   . /var/jenkins_home/env.sh &&
+#   export PATH=/opt/java/openjdk/bin:\$PATH &&
+#   java -jar /var/jenkins_home/jenkins-cli.jar \
+#     -s \$JENKINS_URL \
+#     -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
+#     create-credentials-by-xml system::system::jenkins _ 
+#     " < ../credentials/credentials.xml
+
+# curl -X POST \
+#   -u "admin:$TOKEN" \
+#   -H "Content-Type: text/xml" \
+#   --data-binary @../credentials/credentials.xml \
+#   "http://localhost:8081/credentials/store/system/domain/_/createCredentials"
+
+docker cp ../credentials/github.xml jenkins:/tmp/github.xml
+docker cp ../credentials/docker.xml jenkins:/tmp/docker.xml
+
+
+
+docker exec jenkins bash -c "
+  java -jar /var/jenkins_home/jenkins-cli.jar \
+    -s http://jenkins:8080 \
+    -auth admin:$TOKEN \
+    create-credentials-by-xml system::system::jenkins _ < /tmp/github.xml
+"
+
+docker exec jenkins bash -c "
+  java -jar /var/jenkins_home/jenkins-cli.jar \
+    -s http://jenkins:8080 \
+    -auth admin:$TOKEN \
+    create-credentials-by-xml system::system::jenkins _ < /tmp/docker.xml
+"
+
+
+# docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s http://jenkins:8080 -auth admin:$TOKEN create-credentials-by-xml system::system::jenkins _ < ../credentials/github.xml
+# docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s http://jenkins:8080 -auth admin:$TOKEN create-credentials-by-xml system::system::jenkins _ < ../credentials/docker.xml
+
+# docker exec jenkins bash -c "
+#   . /var/jenkins_home/env.sh &&
+#   export PATH=/opt/java/openjdk/bin:\$PATH &&
+#   java -jar /var/jenkins_home/jenkins-cli.jar \
+#     -s \$JENKINS_URL \
+#     -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
+#     create-credentials-by-xml system::system::jenkins _ <<'EOF'
+# $(cat ../credentials/credentials.xml)
+# EOF
+# "
+
 
 echo "Credentials créé."
 
-docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN create-job test < ../confs/config.xml
+
+# docker exec -i jenkins bash -c ". /var/jenkins_home/env.sh \
+#     export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN" \
+#     java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN create-job test < ../confs/config.xml
+
+# docker exec -i jenkins bash -c "
+#   . /var/jenkins_home/env.sh &&
+#   export PATH=/opt/java/openjdk/bin:\$PATH &&
+#   java -jar /var/jenkins_home/jenkins-cli.jar \
+#     -s \$JENKINS_URL \
+#     -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
+#     create-job test
+#   " < ../confs/config.xml
+
+docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth admin:$TOKEN create-job test < ../confs/config.xml
+
+
+read -p "Define dockerhub-creds" input
 
 read -p "Version a build: " input
 
-docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN build test -f -p VERSION=input
+# docker exec -i jenkins bash -c ". /var/jenkins_home/env.sh \
+    # export JENKINS_URL JENKINS_USER_ID JENKINS_API_TOKEN" \
+    # java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN build test -f -p VERSION=input
 
+# docker exec -i jenkins bash -c "
+#   . /var/jenkins_home/env.sh &&
+#   export PATH=/opt/java/openjdk/bin:\$PATH &&
+#   java -jar /var/jenkins_home/jenkins-cli.jar \
+#     -s \$JENKINS_URL \
+#     -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
+#     build test -f -p VERSION=$input"
+
+docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth admin:$TOKENbuild test -f -p VERSION=input
