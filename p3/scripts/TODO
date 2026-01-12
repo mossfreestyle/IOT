@@ -14,13 +14,12 @@ j ai eu un fail de load de argocd quand je l ai start avec volume vierge mais la
 
 
 
+recuperer les token github et dockerhub 
+
+
+JENKINS GUI a automatiser
 
 jenkins step: mette le mdp admin, installe les recommanded packages, skip la acoount creation and stay as admin, and define the jenkins url as the current one, homepage
-avoir un plugin docker
-
-
-
+avoir un plugin docker pipeline
 generer un token docker hub ou re use le meme et le mettre dans les credentials de jenkins (faut un token avec read/write pour push l image sur dokcer hub)
-avoir ton token github pour define ton username et mdp pour pouvoir git push
-
-recuperer les token github et dockerhub 
+avoir ton token github pour define ton username et mdp pour pouvoir git push (perms -> "contents" en read/write)
