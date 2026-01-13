@@ -1,61 +1,21 @@
 #!/bin/bash
+sudo systemctl enable --now ssh
+sudo apt install -y curl ufw
 
-# Download the bash script to prepare the repository
-curl --silent "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh" | sudo bash
-
-# Download the gitlab-ee package and dependencies to /var/cache/apt/archives
-sudo apt-get install --download-only gitlab-ee
-
-# Copy the contents of the apt download folder to a mounted media device
-sudo cp /var/cache/apt/archives/*.deb /path/to/mount
-
-# Go to the physical media device
-sudo cd /path/to/mount
-
-# Install the dependency packages
-sudo dpkg -i <package_name>.deb
-
-sudo EXTERNAL_URL="http://my-host.internal" dpkg -i <gitlab_package_name>.deb
-
-# Update external_url from "http" to "https"
-external_url "https://my-host.internal"
-
-# Set Let's Encrypt to false
-letsencrypt['enable'] = false
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
 
 
-sudo mkdir -p /etc/gitlab/ssl
-sudo chmod 755 /etc/gitlab/ssl
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/gitlab/ssl/my-host.internal.key -out /etc/gitlab/ssl/my-host.internal.crt
-
-sudo gitlab-ctl reconfigure
+curl "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh" | sudo bash
 
 
-# Change external_registry_url to match external_url, but append the port 4567
-external_url "https://gitlab.example.com"
-registry_external_url "https://gitlab.example.com:4567"
+#On peux set aussi la variable d env pour le mail admin et mdp admin
+sudo EXTERNAL_URL="http://localhost:5555" \
+apt install gitlab-ce
 
-sudo gitlab-ctl reconfigure
-
-
-
-sudo mkdir -p /etc/docker/certs.d/my-host.internal:5000
-
-sudo cp /etc/gitlab/ssl/my-host.internal.crt /etc/docker/certs.d/my-host.internal:5000/ca.crt
-
-
-sudo mkdir -p /etc/gitlab-runner/certs
-
-sudo cp /etc/gitlab/ssl/my-host.internal.crt /etc/gitlab-runner/certs/ca.crt
-
-
-sudo docker run --rm -it -v /etc/gitlab-runner:/etc/gitlab-runner gitlab/gitlab-runner register
-
-# Make the following changes to /etc/gitlab-runner/config.toml:
-# 
-# Add Docker socket to volumes volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
-# Add pull_policy = "if-not-present" to the executor configuration
-
-
-sudo docker run -d --restart always --name gitlab-runner -v /etc/gitlab-runner:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:latest
-90646b6587127906a4ee3f2e51454c6e1f10f26fc7a0b03d9928d8d0d5897b64
+mkdir -p ../credentials/
+sudo cp /etc/gitlab/initial_root_password ../credentials/gitlab_root_mdp.txt
+sudo chmod +r ../credentials/gitlab_root_mdp.txt
+#pour se log user: root, mdp: ../credentials/gitlab_root_mdp.txt

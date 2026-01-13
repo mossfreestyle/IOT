@@ -231,4 +231,4 @@ read -p "Version a build: " input
 #     -auth \$JENKINS_USER_ID:\$JENKINS_API_TOKEN \
 #     build test -f -p VERSION=$input"
 
-docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth admin:$TOKENbuild test -f -p VERSION=input
+docker exec -i jenkins java -jar /var/jenkins_home/jenkins-cli.jar -s $JENKINS_URL -auth admin:$TOKEN build test -f -p VERSION=input
