@@ -1,4 +1,5 @@
 #!/bin/bash
+#source https://docs.gitlab.com/install/package/debian/?tab=Community+Edition
 sudo systemctl enable --now ssh
 sudo apt install -y curl ufw
 
